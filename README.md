@@ -1,6 +1,6 @@
 # kicktipp-bot
 
-Download chromedriver.exe (http://chromedriver.chromium.org/downloads) and add it to your PATH.
+Download chromedriver.exe (http://chromedriver.chromium.org/downloads) and add it to your `PATH`.
 
 # Usage
 
