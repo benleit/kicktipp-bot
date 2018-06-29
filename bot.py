@@ -5,6 +5,36 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys  
 from selenium.webdriver.chrome.options import Options
 
+def query_yes_no(question, default="yes"):
+    """Ask a yes/no question via raw_input() and return their answer.
+
+    "question" is a string that is presented to the user.
+    "default" is the presumed answer if the user just hits <Enter>.
+        It must be "yes" (the default), "no" or None (meaning
+        an answer is required of the user).
+
+    The "answer" return value is True for "yes" or False for "no".
+    """
+    valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
+    if default is None:
+        prompt = " [y/n] "
+    elif default == "yes":
+        prompt = " [Y/n] "
+    elif default == "no":
+        prompt = " [y/N] "
+    else:
+        raise ValueError("invalid default answer: '%s'" % default)
+
+    while True:
+        sys.stdout.write(question + prompt)
+        choice = input().lower()
+        if default is not None and choice == '':
+            return valid[default]
+        elif choice in valid:
+            return valid[choice]
+        else:
+            sys.stdout.write("Please respond with 'yes' or 'no' (or 'y' or 'n').\n")
+
 # enter your login credentials for kicktipp
 print('*** KICKTIPP BOT ***')
 print('Make sure chromedriver (http://chromedriver.chromium.org/) is in your PATH')
@@ -30,9 +60,10 @@ def gamePrediction(heimQuote, drawQuote, gastQuote):
         return [0, max(1, round(1/gastQuote**2 * MAXGOALS))]
 
 # start browser
+HEADLESS = query_yes_no('Run Chrome in headless mode?', default="yes")
 print('Start browser ...')
 chrome_options = Options()  
-chrome_options.add_argument('--headless') # remove to run in window mode
+if HEADLESS: chrome_options.add_argument('--headless') # remove to run in window mode
 chrome_options.add_argument('log-level=3') # surpress output
 chrome_options.add_argument('--disable-extensions')
 chrome_options.add_argument('test-type')
@@ -58,10 +89,10 @@ if driver.title == 'Tipprunde nicht gefunden. | kicktipp' or driver.title == 'Di
     sys.exit('Game ID \'' + YOUR_GAME_ID + '\' not found')
 table = driver.find_elements_by_id('ranking') # get table
 if not table:
-	sys.exit('Game ID \'' + YOUR_GAME_ID + '\' not found')
+    sys.exit('Game ID \'' + YOUR_GAME_ID + '\' not found')
 row = table[0].find_elements_by_css_selector("[class*='treffer']")
 if not row:
-	sys.exit('You are not part of the game \'' + YOUR_GAME_ID + '\'.')
+    sys.exit('You are not part of the game \'' + YOUR_GAME_ID + '\'.')
 # get number of days
 rows = table[0].find_elements_by_css_selector('tr') # get all rows of table
 col_count = len(rows[1].find_elements_by_css_selector('th')) # count number of columns of second row

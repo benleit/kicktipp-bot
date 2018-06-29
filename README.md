@@ -1,1 +1,1 @@
-"# kicktipp-bot" 
+# kicktipp-bot
